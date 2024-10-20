@@ -53,4 +53,5 @@ def check_simplex_answer(c, b, f, var_row, var_col):
 
     if round(check_f, 2) == round(f, 2):
         return True
+
     return False
