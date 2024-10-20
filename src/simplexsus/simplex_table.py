@@ -10,13 +10,15 @@ def create_simplex_table(c, A, b, f):
     Создает симплекс-таблицу из коэффициентов c, матрицы A и вектора b и f.
     """
     table = []
+    rounded_c = [round(elem, 2) for elem in c]
+    rounded_A = [[round(elem, 2) for elem in row] for row in A]
 
     # Формируем таблицу, добавляя строки с b и A
     for i in range(len(A)):
-        table.append([b[i]] + A[i])
+        table.append([round(b[i], 2)] + rounded_A[i])
 
     # Добавляем строку с коэффициентами c
-    table.append([f] + c)
+    table.append([round(f, 2)] + rounded_c)
 
     return table
 
@@ -37,8 +39,7 @@ def print_simplex_table(simplex_table, var_row, var_col):
     print()
 
     # Определяем максимальную ширину для форматирования
-    # max_width = max(len(str(float(j))) for row in simplex_table for j in row) + 2
-    max_width = 6
+    max_width = max(len(str(float(j))) for row in simplex_table for j in row) + 2
 
     # Выводим заголовки
     headers = [var_col[i] for i in range(len(simplex_table[0]))]
@@ -53,7 +54,7 @@ def print_simplex_table(simplex_table, var_row, var_col):
             if j == 0:
                 print(f"{float(0):>{max_width}.2f}", end=" | ")
             else:
-                print(f"{round(float(j), 2):>{max_width}.2f}", end=" | ")
+                print(f"{float(j):>{max_width}.2f}", end=" | ")
         print()
 
     return
