@@ -12,9 +12,10 @@
 """
 
 from .checks import *
-from .simplex_table import *
+from .create import *
 from .iterations import *
 from .utils import *
+from .write import *
 
 
 def simplexsus(c, A, b, f, minimize):
@@ -25,6 +26,7 @@ def simplexsus(c, A, b, f, minimize):
     # Проверка условий
     if check_simplex_table(c, A, b):
         print("[ + ] Check: OK")
+        old_c = c.copy()
         old_b = b.copy()
 
         # Инвертируем c, если ищем минимум
@@ -34,6 +36,7 @@ def simplexsus(c, A, b, f, minimize):
 
         var_row, var_col = create_simplex_variables(A)  # Создание обозначений симплекс-таблицы
         old_var_row = var_row.copy()
+        old_var_col = var_col.copy()
 
         while (max(c) > 0) or (min(b) < 0):
             simplex_table = create_simplex_table(c, A, b, f)        # Создание симплекс-таблицы
@@ -48,7 +51,11 @@ def simplexsus(c, A, b, f, minimize):
                 print("[ - ] Infinite number of solutions")
                 return 1
 
-            print("[ * ] The resolving element is found:", round(simplex_resolve[0], 2), simplex_resolve[1:])
+            print(
+                "[ * ] The resolving element is found:",
+                round(simplex_resolve[0], 2),
+                simplex_resolve[1:],
+            )
 
             var_row, var_col = swap_variables(var_row, var_col, simplex_resolve)
             c, A, b, f = simplex_table_iteration(c, A, b, f, simplex_resolve)
@@ -62,13 +69,13 @@ def simplexsus(c, A, b, f, minimize):
         print("[ - ] Check: BAD TABLE")
         return 1
 
-    if check_simplex_answer(c, old_b, f, old_var_row, var_col):
+    if print_simplex_answer(old_c, A, b, f, var_row, old_var_col):
         if minimize:
-            print("[ * ] The function goes to the minimum")
+            print("[ * ] F -> minimum")
             return round(f, 2)
 
         else:
-            print("[ * ] The function goes to the maximum")
+            print("[ * ] F -> maximum")
             return round(f * -1, 2)
 
     print("[ - ] Check: BAD ANS")

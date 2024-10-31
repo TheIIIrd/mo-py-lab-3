@@ -4,6 +4,7 @@
 - swap_variables: Меняет местами элементы в списках переменных на основе разрешающего элемента.
 """
 
+
 def to_dual_task(c, A, b, minimize):
     """
     Преобразует заданные параметры для двойственной задачи линейного программирования.
@@ -28,5 +29,9 @@ def swap_variables(var_row, var_col, simplex_resolve):
     Меняет местами элементы в двух списках на основе указаний,
     полученных из решения симплекс-метода.
     """
-    var_row[simplex_resolve[1]], var_col[simplex_resolve[2] + 1] = var_col[simplex_resolve[2] + 1], var_row[simplex_resolve[1]]
+    var_row[simplex_resolve[1]], var_col[simplex_resolve[2] + 1] = (
+        var_col[simplex_resolve[2] + 1],
+        var_row[simplex_resolve[1]],
+    )
+
     return var_row, var_col

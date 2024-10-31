@@ -5,6 +5,7 @@
 - check_simplex_answer: Проверяет корректность решения, полученного с использованием симплекс-метода.
 """
 
+
 def check_simplex_table(c, A, b):
     """
     Проверка корректности входных данных для симплекс-метода.
@@ -33,25 +34,11 @@ def check_simplex_response(c, A, b):
         return False  # Все коэффициенты равны нулю
 
     for row in range(len(b)):
-        if b[row] < 0:                      # Если есть отрицательный элемент в b
-            for col in range(len(A[0])):    # Ошибка в исходном коде: A должен быть матрицей
+        if b[row] < 0:              # Если есть отрицательный элемент в b
+            for col in range(
+                len(A[0])
+            ):                      # Ошибка в исходном коде: A должен быть матрицей
                 if min(A[row]) >= 0:
-                    return False            # Нет подходящих коэффициентов
+                    return False    # Нет подходящих коэффициентов
 
     return True  # Существуют отрицательные коэффициенты
-
-
-def check_simplex_answer(c, b, f, var_row, var_col):
-    """
-    Проверяет корректность решения, полученного с использованием симплекс-метода.
-    """
-    check_f = 0
-
-    for i in range(len(var_row)):
-        if var_row[i] in var_col:
-            check_f += b[i] * c[var_col.index(var_row[i]) - 1]
-
-    if round(check_f, 2) == round(f, 2):
-        return True
-
-    return False

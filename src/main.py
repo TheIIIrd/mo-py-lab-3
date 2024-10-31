@@ -13,7 +13,7 @@ def main():
     c = [7, 4, 3]                               # Коэффициенты целевой функции
     A = [[3, 1, 1], [1, 1, 0], [0, 0.5, 4]]     # Ограничения
     b = [5, 2, 6]                               # Правая часть ограничений
-    f = 0
+    f = 0                                       # Значение функции
 
     c, A, b, minimize = to_dual_task(c, A, b, minimize)
     print("[ + ] Ans:", simplexsus(c, A, b, f, minimize))

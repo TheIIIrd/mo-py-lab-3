@@ -22,7 +22,7 @@ def find_simplex_resolve(c, A, b):
                     if A[row][col] < 0:
                         # Возвращаем минимальное отношение для данного столбца
                         try:
-                            return [A[row][col], row, col]
+                            return find_min_ratio(A, b, col)
                         except:
                             return ["inf"]
 
@@ -75,14 +75,18 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
 
     new_c = [0] * len(c)  # Инициализируем новый вектор коэффициентов целевой функции
     new_b = [0] * len(b)  # Инициализируем новый вектор правых частей
-    new_A = [[0 for _ in range(len(A[0]))] for _ in range(len(A))]  # Инициализируем новую матрицу ограничений
+    new_A = [
+        [0 for _ in range(len(A[0]))] for _ in range(len(A))
+    ]  # Инициализируем новую матрицу ограничений
 
     # Заполняем колонну A
     for i in range(len(A)):
-        if i == simplex_resolve[1]:  # Текущая строка разрешающего элемента
+        if i == simplex_resolve[1]:     # Текущая строка разрешающего элемента
             new_A[i][simplex_resolve[2]] = new_simplex_resolve
-        else:  # Остальные строки
-            new_A[i][simplex_resolve[2]] = (A[i][simplex_resolve[2]] / simplex_resolve[0] * -1)
+        else:                           # Остальные строки
+            new_A[i][simplex_resolve[2]] = (
+                A[i][simplex_resolve[2]] / simplex_resolve[0] * -1
+            )
 
     # Обновляем коэффициенты целевой функции для разрешающего столбца
     new_c[simplex_resolve[2]] = c[simplex_resolve[2]] / simplex_resolve[0] * -1
@@ -100,20 +104,27 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
     for i in range(len(c)):
         if i == simplex_resolve[2]:
             continue
-        new_c[i] = c[i] - (A[simplex_resolve[1]][i] * c[simplex_resolve[2]]) / (simplex_resolve[0])
+        new_c[i] = c[i] - (A[simplex_resolve[1]][i] * c[simplex_resolve[2]]) / (
+            simplex_resolve[0]
+        )
 
     # Обновляем вектор правых частей для остальных строк
     for i in range(len(b)):
         if i == simplex_resolve[1]:
             continue
-        new_b[i] = b[i] - ((A[i][simplex_resolve[2]] * b[simplex_resolve[1]]) / simplex_resolve[0])
+        new_b[i] = b[i] - (
+            (A[i][simplex_resolve[2]] * b[simplex_resolve[1]]) / simplex_resolve[0]
+        )
 
     # Обновляем матрицу ограничений
     for i in range(len(A)):
         for j in range(len(A[0])):
             if (i == simplex_resolve[1]) or (j == simplex_resolve[2]):
                 continue
-            new_A[i][j] = A[i][j] - ((A[i][simplex_resolve[2]] * A[simplex_resolve[1]][j]) / simplex_resolve[0])
+            new_A[i][j] = A[i][j] - (
+                (A[i][simplex_resolve[2]] * A[simplex_resolve[1]][j])
+                / simplex_resolve[0]
+            )
 
     # Обновляем значение целевой функции
     new_f = f - ((c[simplex_resolve[2]] * b[simplex_resolve[1]]) / simplex_resolve[0])
