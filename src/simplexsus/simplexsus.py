@@ -27,12 +27,12 @@ def simplexsus(c, A, b, f, minimize):
     if check_simplex_table(c, A, b):
         print("[ + ] Check: OK")
         old_c = c.copy()
+        old_A = A.copy()
         old_b = b.copy()
 
         # Инвертируем c, если ищем минимум
         if minimize:
-            for i in range(len(c)):
-                c[i] *= -1
+            c = [-elem for elem in c]
 
         var_row, var_col = create_simplex_variables(A)  # Создание обозначений симплекс-таблицы
         old_var_row = var_row.copy()
@@ -69,14 +69,17 @@ def simplexsus(c, A, b, f, minimize):
         print("[ - ] Check: BAD TABLE")
         return 1
 
-    if print_simplex_answer(old_c, A, b, f, var_row, old_var_col):
+    if not minimize:
+        f *= -1
+
+    if print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
         if minimize:
             print("[ * ] F -> minimum")
             return round(f, 2)
 
         else:
             print("[ * ] F -> maximum")
-            return round(f * -1, 2)
+            return round(f, 2)
 
     print("[ - ] Check: BAD ANS")
     return -1

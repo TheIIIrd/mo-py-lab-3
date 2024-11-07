@@ -33,48 +33,51 @@ def print_simplex_table(simplex_table, var_row, var_col):
     return
 
 
-def print_simplex_answer(c, A, b, f, var_row, var_col):
+def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
     """
     Выводит решение с проверкой симплекс-таблицы в терминал.
     """
-    answer_variables = [0 for _ in range(len(var_col) - 1)]
-    print_data = ["\nF = "]
+    answer_variables = [0 for _ in range(len(old_var_col) - 1)]
     check_f = 0
+    data = ["\nF = "]
 
     for i in range(len(var_row)):
-        if var_row[i] in var_col:
-            answer_variables[var_col.index(var_row[i]) - 1] = round(b[i], 2)
-            check_f += b[i] * c[var_col.index(var_row[i]) - 1]
+        if var_row[i] in old_var_col:
+            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)    # Сохранение значения
+            check_f += (b[i] * old_c[old_var_col.index(var_row[i]) - 1])            # Подсчёт вклада в целевую функцию
 
-            print_data += ["( ", round(b[i], 2), " * ", c[var_col.index(var_row[i]) - 1], " )", " + "]
+            data += ["( ", round(b[i], 2), " * ", old_c[old_var_col.index(var_row[i]) - 1], " )", " + " ]
 
-    print_data.pop()
-    print_data.append("\n")
+    data.pop()          # Удаление лишнего "+"
+    data.append("\n")   # Новая строка
 
-    if round(check_f, 2) == round(f, 2):
-        for row in range(len(A)):
+    if round(check_f, 2) == round(f, 2):    # Новая строка
+        for row in range(len(old_A)):
             check_row = 0
 
-            for col in range(len(A[0])):
-                check_row += A[row][col] * answer_variables[col]
-                print_data += ["( ", round(A[row][col], 2), " * ", answer_variables[col], " )", " + "]
+            for col in range(len(old_A[0])):
+                check_row += old_A[row][col] * answer_variables[col]
+                data += ["( ", round(old_A[row][col], 2), " * ", answer_variables[col], " )", " + "]
 
-            print_data.pop()
-            print_data += [" <= ", round(b[row], 2)]
+            data.pop()
+            data += [" <= ", round(old_b[row], 2)]
 
-            if round(check_row, 2) <= b[row]:
-                print_data += [" True", "\n"]
+            # Проверка ограничений
+            if (round(check_row, 2) <= (old_b[row] - 0.01)) or (
+                round(check_row, 2) <= (old_b[row] + 0.01)
+            ):
+                data += [" True", "\n"]
 
             else:
-                print_data += [" False", "\n"]
+                data += [" False", "\n"]
 
-                for element in print_data:
+                for element in data:
                     print(element, sep="", end="")
                 print()
 
                 return False
 
-        for element in print_data:
+        for element in data:
             print(element, sep="", end="")
         print("\n[ * ] ", end="")
 
@@ -85,4 +88,4 @@ def print_simplex_answer(c, A, b, f, var_row, var_col):
     else:
         return False
 
-    return True
+    return True  # Успешное завершение
