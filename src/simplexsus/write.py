@@ -82,7 +82,7 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
         print("\n[ * ] ", end="")
 
         for i in range(len(answer_variables)):
-            print(f"x{i} = {answer_variables[i]}", end=" ")
+            print(f"x{i+1} = {answer_variables[i]}", end=" ")
         print()
 
     else:
