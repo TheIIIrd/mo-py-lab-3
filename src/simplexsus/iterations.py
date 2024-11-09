@@ -55,7 +55,7 @@ def find_min_ratio(A, b, min_ratio_col):
         ratio = b[row] / A[row][min_ratio_col]
 
         # Обновляем минимальное отношение, если нашли новое
-        if (ratio > 0) and (ratio < min_ratio):
+        if (ratio > 0) and (ratio <= min_ratio):
             min_ratio = ratio
             min_ratio_row = row
 
@@ -75,9 +75,7 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
 
     new_c = [0] * len(c)  # Инициализируем новый вектор коэффициентов целевой функции
     new_b = [0] * len(b)  # Инициализируем новый вектор правых частей
-    new_A = [
-        [0 for _ in range(len(A[0]))] for _ in range(len(A))
-    ]  # Инициализируем новую матрицу ограничений
+    new_A = [[0 for _ in range(len(A[0]))] for _ in range(len(A))]  # Инициализируем новую матрицу ограничений
 
     # Заполняем колонну A
     for i in range(len(A)):
@@ -113,7 +111,8 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
         if i == simplex_resolve[1]:
             continue
         new_b[i] = b[i] - (
-            (A[i][simplex_resolve[2]] * b[simplex_resolve[1]]) / simplex_resolve[0]
+            (A[i][simplex_resolve[2]] * b[simplex_resolve[1]])
+            / simplex_resolve[0]
         )
 
     # Обновляем матрицу ограничений
@@ -127,6 +126,8 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
             )
 
     # Обновляем значение целевой функции
-    new_f = f - ((c[simplex_resolve[2]] * b[simplex_resolve[1]]) / simplex_resolve[0])
+    new_f = f - ((c[simplex_resolve[2]] * b[simplex_resolve[1]])
+                / simplex_resolve[0]
+    )
 
     return new_c, new_A, new_b, new_f
