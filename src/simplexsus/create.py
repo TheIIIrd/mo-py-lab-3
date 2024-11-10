@@ -2,7 +2,7 @@
 Функции для работы с симплекс-таблицей:
 - create_simplex_table: Создает симплекс-таблицу из заданных коэффициентов, ограничений и правых частей.
 - create_simplex_variables: Создает имена переменных для симплекс-таблицы.
-- print_simplex_table: Выводит симплекс-таблицу в консоль в форматированном виде.
+- create_answer_variables: Создает искомый вектор значений в форматированном виде.
 """
 
 
@@ -31,3 +31,16 @@ def create_simplex_variables(A):
     var_col = ["b"] + [f"x{i+1}" for i in range(len(A[0]))]
     var_row = [f"x{i+1+len(var_col)}" for i in range(len(A))] + ["F "]
     return var_row, var_col
+
+
+def create_answer_variables(b, var_row, old_var_col):
+    """
+    Создает искомый вектор значений
+    """
+    answer_variables = [0 for _ in range(len(old_var_col) - 1)]
+
+    for i in range(len(var_row)):
+        if var_row[i] in old_var_col:
+            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)    # Сохранение значения
+
+    return answer_variables

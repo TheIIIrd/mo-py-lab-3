@@ -79,9 +79,9 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
 
     # Заполняем колонну A
     for i in range(len(A)):
-        if i == simplex_resolve[1]:     # Текущая строка разрешающего элемента
+        if i == simplex_resolve[1]: # Текущая строка разрешающего элемента
             new_A[i][simplex_resolve[2]] = new_simplex_resolve
-        else:                           # Остальные строки
+        else:                       # Остальные строки
             new_A[i][simplex_resolve[2]] = (
                 A[i][simplex_resolve[2]] / simplex_resolve[0] * -1
             )
@@ -102,8 +102,8 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
     for i in range(len(c)):
         if i == simplex_resolve[2]:
             continue
-        new_c[i] = c[i] - (A[simplex_resolve[1]][i] * c[simplex_resolve[2]]) / (
-            simplex_resolve[0]
+        new_c[i] = (c[i] - (A[simplex_resolve[1]][i] * c[simplex_resolve[2]])
+                   / simplex_resolve[0]
         )
 
     # Обновляем вектор правых частей для остальных строк
@@ -127,7 +127,6 @@ def simplex_table_iteration(c, A, b, f, simplex_resolve):
 
     # Обновляем значение целевой функции
     new_f = f - ((c[simplex_resolve[2]] * b[simplex_resolve[1]])
-                / simplex_resolve[0]
-    )
+                / simplex_resolve[0])
 
     return new_c, new_A, new_b, new_f

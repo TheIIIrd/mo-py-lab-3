@@ -4,6 +4,8 @@
 - print_simplex_answer: Выводит решение с проверкой симплекс-таблицы.
 """
 
+from .create import create_answer_variables
+
 
 def print_simplex_table(simplex_table, var_row, var_col):
     """
@@ -37,55 +39,39 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
     """
     Выводит решение с проверкой симплекс-таблицы в терминал.
     """
-    answer_variables = [0 for _ in range(len(old_var_col) - 1)]
-    check_f = 0
-    data = ["\nF = "]
+    answer_variables = create_answer_variables(b, var_row, old_var_col)
+    check_f = sum(
+        b[i] * old_c[old_var_col.index(var_row[i]) - 1]
+        for i in range(len(var_row))
+        if var_row[i] in old_var_col
+    )
 
-    for i in range(len(var_row)):
-        if var_row[i] in old_var_col:
-            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)    # Сохранение значения
-            check_f += (b[i] * old_c[old_var_col.index(var_row[i]) - 1])            # Подсчёт вклада в целевую функцию
+    print(
+        f"\nF = {' + '.join(f'({round(b[i], 2)} * {old_c[old_var_col.index(var_row[i]) - 1]})' for i in range(len(var_row)) if var_row[i] in old_var_col)}"
+    )
 
-            data += ["( ", round(b[i], 2), " * ", old_c[old_var_col.index(var_row[i]) - 1], " )", " + " ]
-
-    data.pop()          # Удаление лишнего "+"
-    data.append("\n")   # Новая строка
-
-    if round(check_f, 2) == round(f, 2):    # Новая строка
-        for row in range(len(old_A)):
-            check_row = 0
-
-            for col in range(len(old_A[0])):
-                check_row += old_A[row][col] * answer_variables[col]
-                data += ["( ", round(old_A[row][col], 2), " * ", answer_variables[col], " )", " + "]
-
-            data.pop()
-            data += [" <= ", round(old_b[row], 2)]
-
-            # Проверка ограничений
-            if (round(check_row, 2) <= (old_b[row] - 0.01)) or (
-                round(check_row, 2) <= (old_b[row] + 0.01)
-            ):
-                data += [" True", "\n"]
-
-            else:
-                data += [" False", "\n"]
-
-                for element in data:
-                    print(element, sep="", end="")
-                print()
-
-                return False
-
-        for element in data:
-            print(element, sep="", end="")
-        print("\n[ * ] ", end="")
-
-        for i in range(len(answer_variables)):
-            print(f"x{i+1} = {answer_variables[i]}", end=" ")
-        print()
-
-    else:
+    if round(check_f, 2) != round(f, 2):
         return False
 
+    # Проверка ограничений
+    for row in range(len(old_A)):
+        check_row = sum(
+            old_A[row][col] * answer_variables[col] for col in range(len(old_A[0]))
+        )
+        constraint_check = round(check_row, 1) <= round(old_b[row], 1)
+
+        constraint_result = "[True]" if constraint_check else "[False]"
+        print(
+            f"{constraint_result} {' + '.join(f'({round(old_A[row][col], 2)} * {answer_variables[col]})' for col in range(len(old_A[0])))} <= {round(old_b[row], 2)}"
+        )
+
+        if not constraint_check:
+            return False
+
+    print(
+        "\n[ * ] ",
+        " ".join(
+            f"x{i + 1} = {answer_variables[i]}" for i in range(len(answer_variables))
+        ),
+    )
     return True  # Успешное завершение
