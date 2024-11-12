@@ -16,9 +16,9 @@ def main():
     b = [5, 2, 6]                               # Правая часть ограничений
     f = 0                                       # Значение функции
 
-    c, A, b, minimize = to_dual_task(c, A, b, minimize)
-    # print("[ + ] Ans:", simplexsus(c, A, b, f, minimize))
-    print("[ + ] Ans:", branches_and_bounds(c, A, b, f, minimize))
+    # c, A, b, minimize = to_dual_task(c, A, b, minimize)
+    # print("[ + ] Answer:", simplexsus(c, A, b, f, minimize))
+    print("[ + ] Best answer:", branches_and_bounds(c, A, b, f, minimize))
 
     return 0
 

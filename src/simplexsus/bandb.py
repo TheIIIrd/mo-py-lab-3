@@ -38,16 +38,22 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
 
     if answer_simplexsus[0] == float("inf"):
         print("[ - ] No solution")
-        return [float("inf")]
+        return best_solution  # Возвращаем текущее лучшее решение, а не [inf]
 
     answer_variables = answer_simplexsus[1::]
     best_solution = check_integer_solution(answer_simplexsus, answer_variables, best_solution)
 
     for i in range(len(answer_variables)):
         if not is_integer(answer_variables[i]):
+            print("[ - ] Non-integer answer:", answer_simplexsus, "\n")
             best_solution = branch_and_bound(
                 c, A, b, f, minimize, answer_variables, i, best_solution
             )
+
+    if best_solution is None:
+        print("[ - ] Best solution remains None")
+    else:
+        print("[ * ] Current best solution:", best_solution)
 
     return best_solution
 
@@ -61,7 +67,9 @@ def check_integer_solution(answer_simplexsus, answer_variables, best_solution):
     if is_integer_solution:
         if best_solution is None or answer_simplexsus[0] < best_solution[0]:
             best_solution = answer_simplexsus
-            print("[ + ] New best solution found:", best_solution)
+            print("[ + ] New best solution found:", best_solution, "\n")
+        else:
+            print("[ * ] Current solution is integer but not better:", answer_simplexsus)
 
     return best_solution
 
@@ -83,6 +91,7 @@ def branch_and_bound(c, A, b, f, minimize, answer_variables, i, best_solution):
     A.append(A_string)
     b.append(branching_variable)
 
+    print(f"[ * ] Adding a new condition for x{i + 1} = {answer_variables[i]}: x{i + 1} <= {b[-1]}; x{i + 1} >= {b[-1] + 1}")
     # print("\n", answer_variables[i], branching_variable, A_string, b)
     # print(c, A, b, f, minimize, "\n")
 
