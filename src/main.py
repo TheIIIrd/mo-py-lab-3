@@ -3,6 +3,7 @@
 """
 
 from simplexsus.simplexsus import simplexsus, to_dual_task
+from simplexsus.bandb import branches_and_bounds
 
 
 def main():
@@ -16,7 +17,8 @@ def main():
     f = 0                                       # Значение функции
 
     c, A, b, minimize = to_dual_task(c, A, b, minimize)
-    print("[ + ] Ans:", simplexsus(c, A, b, f, minimize))
+    # print("[ + ] Ans:", simplexsus(c, A, b, f, minimize))
+    print("[ + ] Ans:", branches_and_bounds(c, A, b, f, minimize))
 
     return 0
 

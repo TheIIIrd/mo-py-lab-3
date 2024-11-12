@@ -15,14 +15,20 @@ def print_simplex_table(simplex_table, var_row, var_col):
 
     # Определяем максимальную ширину для форматирования
     max_width = max(len(str(float(j))) for row in simplex_table for j in row) + 2
+    max_width_row = max(len(x) for x in var_row)
 
     # Выводим заголовки
     headers = [var_col[i] for i in range(len(simplex_table[0]))]
     print("    ", " | ".join(f"{header:>{max_width}}" for header in headers))
-    print("----", "-" * (max_width * len(headers) + 4 * (len(headers) - 1)), sep="")
+    print(
+        "----",
+        "-" * (max_width * len(headers) + 4 * (len(headers) - 1)),
+        "-" * (max_width_row - 2),
+        sep="",
+    )
 
     for i in range(len(simplex_table)):
-        print(var_row[i], end=" | ")
+        print((var_row[i] + " " * (max_width_row - len(var_row[i]) + 1)), end="| ")
 
         for j in simplex_table[i]:
             # Выравнивание по правому краю, 2 знака после запятой
@@ -69,9 +75,9 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
             return False
 
     print(
-        "\n[ * ] ",
-        " ".join(
-            f"x{i + 1} = {answer_variables[i]}" for i in range(len(answer_variables))
+        "\n[ * ]",
+        "".join(
+            f"x{i + 1} = {answer_variables[i]} " for i in range(len(answer_variables))
         ),
     )
     return True  # Успешное завершение

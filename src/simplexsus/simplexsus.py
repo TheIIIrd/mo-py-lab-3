@@ -46,10 +46,10 @@ def simplexsus(c, A, b, f, minimize):
             # Обработка результатов нахождения разрешающего элемента
             if simplex_resolve == ["not"]:
                 print("[ - ] There's no answer")
-                return 1
+                return [float("inf")]
             if simplex_resolve == ["inf"]:
                 print("[ - ] Infinite number of solutions")
-                return 1
+                return [float("inf")]
 
             print(
                 "[ * ] The resolving element is found:",
@@ -67,19 +67,20 @@ def simplexsus(c, A, b, f, minimize):
 
     else:
         print("[ - ] Check: BAD TABLE")
-        return 1
+        return [float("inf")]
 
     if not minimize:
         f *= -1
 
     if print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
+        answer_variables = create_answer_variables(b, var_row, old_var_col)
+
         if minimize:
             print("[ * ] F -> minimum")
-            return round(f, 2)
-
+            return [round(f, 2)] + answer_variables
         else:
             print("[ * ] F -> maximum")
-            return round(f, 2)
+            return [round(f, 2)] + answer_variables
 
     print("[ - ] Check: BAD ANS")
-    return -1
+    return [float("inf")]

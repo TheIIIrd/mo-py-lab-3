@@ -11,8 +11,8 @@ def create_simplex_table(c, A, b, f):
     Создает симплекс-таблицу из коэффициентов c, матрицы A и вектора b и f.
     """
     table = []
-    rounded_c = [round(elem, 2) for elem in c]
-    rounded_A = [[round(elem, 2) for elem in row] for row in A]
+    rounded_c = [round(num, 2) for num in c]
+    rounded_A = [[round(num, 2) for num in row] for row in A]
 
     # Формируем таблицу, добавляя строки с b и A
     for i in range(len(A)):
@@ -41,6 +41,6 @@ def create_answer_variables(b, var_row, old_var_col):
 
     for i in range(len(var_row)):
         if var_row[i] in old_var_col:
-            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)    # Сохранение значения
+            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)  # Сохранение значения
 
     return answer_variables
