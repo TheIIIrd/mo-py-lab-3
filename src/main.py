@@ -3,7 +3,7 @@
 """
 
 from simplexsus.simplexsus import simplexsus, to_dual_task
-from simplexsus.bandb import branches_and_bounds
+from simplexsus.bounds import branches_and_bounds
 
 
 def main():
