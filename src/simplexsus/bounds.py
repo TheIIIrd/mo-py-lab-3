@@ -19,10 +19,6 @@
 3. is_integer(value):
    - Проверяет, является ли переданное значение целым числом.
    - Возвращает True, если значение является целым числом, иначе False.
-
-4. branch_and_bound(c, A, b, f, minimize, answer_variables, i, best_solution):
-   - Создает новое ограничение для ветвления и рекурсивно вызывает метод ветвей и границ.
-   - Возвращает обновленное лучшее решение после выполнения ветвления.
 """
 
 from .simplexsus import simplexsus
@@ -33,27 +29,51 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
     """
     Реализация метода ветвей и границ для нахождения целочисленного решения задачи линейного программирования.
     """
-    answer_simplexsus = simplexsus(c, A, b, f, minimize)
-    print("[ * ] Ans:", answer_simplexsus)
+    stack = [(c, A, b, f, minimize, best_solution)]
 
-    if answer_simplexsus[0] == float("inf"):
-        print("[ - ] No solution")
-        return best_solution  # Возвращаем текущее лучшее решение, а не [inf]
+    while stack:
+        current_c, current_A, current_b, current_f, current_minimize, current_best_solution = stack.pop()
 
-    answer_variables = answer_simplexsus[1::]
-    best_solution = check_integer_solution(answer_simplexsus, answer_variables, best_solution)
+        answer_simplexsus = simplexsus(current_c, current_A, current_b, current_f, current_minimize)
 
-    for i in range(len(answer_variables)):
-        if not is_integer(answer_variables[i]):
-            print("[ - ] Non-integer answer:", answer_simplexsus, "\n")
-            best_solution = branch_and_bound(
-                c, A, b, f, minimize, answer_variables, i, best_solution
-            )
+        if answer_simplexsus[0] == float("inf"):
+            continue  # Нет решения, пропускаем итерацию
 
-    if best_solution is None:
-        print("[ - ] Best solution remains None")
-    else:
-        print("[ * ] Current best solution:", best_solution)
+        answer_variables = answer_simplexsus[1::]
+        current_best_solution = check_integer_solution(answer_simplexsus, answer_variables, current_best_solution)
+
+        # Если нашли новое лучшее решение, обновляем best_solution
+        if current_best_solution is not None and (best_solution is None or current_best_solution[0] > best_solution[0]):
+            best_solution = current_best_solution
+
+        i = 0
+        found = False
+        while i < len(answer_variables) and not found:
+            if not is_integer(answer_variables[i]):
+                # Ветвление
+                branching_variable = floor(answer_variables[i])
+
+                print(
+                    f"\n[ * ] Adding a new condition for x{i + 1} = {answer_variables[i]}:",
+                    f"x{i + 1} <= {branching_variable}; x{i + 1} >= {branching_variable + 1}",
+                )
+
+                # Создаем новые ограничения
+                new_A_left = current_A + [[0 if j != i else 1 for j in range(len(c))]]
+                new_b_left = current_b + [branching_variable]
+
+                # Добавляем новое ограничение для x_i <= branching_variable
+                stack.append((current_c, new_A_left, new_b_left, current_f, current_minimize, best_solution))
+
+                # Добавляем ограничение для x_i >= branching_variable + 1
+                new_A_right = current_A + [[0 if j != i else -1 for j in range(len(c))]]
+                new_b_right = current_b + [(branching_variable + 1) * -1]
+
+                stack.append((current_c, new_A_right, new_b_right, current_f, current_minimize, best_solution))
+
+                found = True  # Устанавливаем флаг, чтобы выйти из цикла
+
+            i += 1  # Увеличиваем индекс
 
     return best_solution
 
@@ -79,30 +99,3 @@ def is_integer(value):
     Проверяет, является ли значение целым числом.
     """
     return floor(value) == value
-
-
-def branch_and_bound(c, A, b, f, minimize, answer_variables, i, best_solution):
-    """
-    Создает новое ограничение для ветвления и рекурсивно вызывает метод ветвей и границ.
-    """
-    branching_variable = floor(answer_variables[i])
-    A_string = [0 for num in c]
-    A_string[i] = 1
-    A.append(A_string)
-    b.append(branching_variable)
-
-    print(f"[ * ] Adding a new condition for x{i + 1} = {answer_variables[i]}: x{i + 1} <= {b[-1]}; x{i + 1} >= {b[-1] + 1}")
-    # print("\n", answer_variables[i], branching_variable, A_string, b)
-    # print(c, A, b, f, minimize, "\n")
-
-    best_solution = branches_and_bounds(c, A, b, f, minimize, best_solution)
-
-    b[-1] = (b[-1] + 1) * -1
-    A[-1][i] *= -1
-
-    # print("\n[ ? ] more", answer_variables[i], branching_variable, A_string, b)
-    # print(c, A, b, f, minimize, "\n")
-
-    best_solution = branches_and_bounds(c, A, b, f, minimize, best_solution)
-
-    return best_solution
