@@ -54,8 +54,8 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
                 branching_variable = floor(answer_variables[i])
 
                 print(
-                    f"\n[ * ] Adding a new condition for x{i + 1} = {answer_variables[i]}:",
-                    f"x{i + 1} <= {branching_variable}; x{i + 1} >= {branching_variable + 1}",
+                    f"\n\033[95m[ * ]\033[0m Adding a new condition for x{i + 1} = {answer_variables[i]}:",
+                    f"\033[4m[x{i + 1} <= {branching_variable}; x{i + 1} >= {branching_variable + 1}]\033[0m",
                 )
 
                 # Создаем новые ограничения
@@ -87,9 +87,9 @@ def check_integer_solution(answer_simplexsus, answer_variables, best_solution):
     if is_integer_solution:
         if best_solution is None or answer_simplexsus[0] < best_solution[0]:
             best_solution = answer_simplexsus
-            print("[ + ] New best solution found:", best_solution, "\n")
+            print("\033[93m[ + ]\033[0m New best solution found:", best_solution, "\n")
         else:
-            print("[ * ] Current solution is integer but not better:", answer_simplexsus)
+            print("\033[95m[ * ]\033[0m Current solution is integer but not better:", answer_simplexsus)
 
     return best_solution
 

@@ -61,7 +61,7 @@ def find_min_ratio(A, b, min_ratio_col):
 
     # Если не найден подходящий индекс, выбрасываем ошибку
     if min_ratio_row == -1:
-        raise ValueError("[ ! ] Нет допустимого разрешающего элемента.")
+        raise ValueError("\033[91m[ ! ]\033[0m There is no valid permissive element.")
 
     return [A[min_ratio_row][min_ratio_col], min_ratio_row, min_ratio_col]
 

@@ -25,7 +25,7 @@ def simplexsus(c, A, b, f, minimize):
     """
     # Проверка условий
     if check_simplex_table(c, A, b):
-        print("[ + ] Check: OK")
+        print("\033[93m[ + ]\033[0m Check: OK")
         old_c = c.copy()
         old_A = A.copy()
         old_b = b.copy()
@@ -45,14 +45,14 @@ def simplexsus(c, A, b, f, minimize):
 
             # Обработка результатов нахождения разрешающего элемента
             if simplex_resolve == ["not"]:
-                print("[ - ] There's no answer")
+                print("\033[91m[ - ] There's no answer\033[0m\n")
                 return [float("inf")]
             if simplex_resolve == ["inf"]:
-                print("[ - ] Infinite number of solutions")
+                print("\033[91m[ - ] Infinite number of solutions\033[0m\n")
                 return [float("inf")]
 
             print(
-                "[ * ] The resolving element is found:",
+                "\033[95m[ * ]\033[0m The resolving element is found:",
                 round(simplex_resolve[0], 2),
                 simplex_resolve[1:],
             )
@@ -61,12 +61,12 @@ def simplexsus(c, A, b, f, minimize):
             c, A, b, f = simplex_table_iteration(c, A, b, f, simplex_resolve)
 
         # Найдено оптимальное решение
-        print("\n[ + ] OPTI ANS", end="")
+        print("\n\033[93m[ + ]\033[0m OPTI ANS", end="")
         simplex_table = create_simplex_table(c, A, b, f)        # Создание симплекс-таблицы
         print_simplex_table(simplex_table, var_row, var_col)    # Вывод симплекс-таблицы
 
     else:
-        print("[ - ] Check: BAD TABLE")
+        print("\033[91m[ - ] Check: BAD TABLE\033[0m\n")
         return [float("inf")]
 
     if not minimize:
@@ -76,11 +76,11 @@ def simplexsus(c, A, b, f, minimize):
         answer_variables = create_answer_variables(b, var_row, old_var_col)
 
         if minimize:
-            print("[ * ] F -> minimum")
+            print("\033[95m[ * ]\033[0m F -> minimum")
             return [round(f, 2)] + answer_variables
         else:
-            print("[ * ] F -> maximum")
+            print("\033[95m[ * ]\033[0m F -> maximum")
             return [round(f, 2)] + answer_variables
 
-    print("[ - ] Check: BAD ANS")
+    print("\033[91m[ - ] Check: BAD ANS\033[0m\n")
     return [float("inf")]
