@@ -52,9 +52,10 @@ def simplexsus(c, A, b, f, minimize):
                 return [float("inf")]
 
             print(
-                "\033[95m[ * ]\033[0m The resolving element is found:",
+                "\033[95m[ * ]\033[0m The resolving element is found:\033[95m",
                 round(simplex_resolve[0], 2),
                 simplex_resolve[1:],
+                "\033[0m",
             )
 
             var_row, var_col = swap_variables(var_row, var_col, simplex_resolve)

@@ -55,7 +55,7 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
 
                 print(
                     f"\n\033[95m[ * ]\033[0m Adding a new condition for x{i + 1} = {answer_variables[i]}:",
-                    f"\033[4m[x{i + 1} <= {branching_variable}; x{i + 1} >= {branching_variable + 1}]\033[0m",
+                    f"\033[95m[x{i + 1} <= {branching_variable}; x{i + 1} >= {branching_variable + 1}]\033[0m",
                 )
 
                 # Создаем новые ограничения
