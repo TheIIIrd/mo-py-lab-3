@@ -25,7 +25,7 @@ def simplexsus(c, A, b, f, minimize):
     """
     # Проверка условий
     if check_simplex_table(c, A, b):
-        print("\033[93m[ + ]\033[0m Check: OK")
+        print("\033[93m[ + ]\033[0m Check: OK", end="")
         old_c = c.copy()
         old_A = A.copy()
         old_b = b.copy()
