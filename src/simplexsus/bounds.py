@@ -114,7 +114,7 @@ def check_best_solution(c, A, b, minimize, best_solution):
     Проверяет, является ли текущее решение лучшим, с учетом ограничений.
     """
     # Определяем ограничение по максимальному значению из вектора b
-    limitation = floor(max(b))
+    limitation = floor(max(b)) + 1
     
     # Инициализируем список альтернативных значений переменных с нулями
     x_alternatives = [0 for _ in c]
@@ -129,7 +129,7 @@ def check_best_solution(c, A, b, minimize, best_solution):
                     check_f = sum(c[i] * x_alternatives[i] for i in range(len(c)))
 
                     # Выводим текущее состояние перебора
-                    print(f"\033[95m[ * ]\033[0m scrambling... {x_alternatives} F = {check_f}:", end=(" " * (num_digits_f - len(str(abs(check_f))))))
+                    print(f"\033[95m[ * ]\033[0m Scrambling... {x_alternatives} F = {check_f}:", end=(" " * (num_digits_f - len(str(abs(check_f))))))
 
                     # Проверка ограничений
                     row = 0
