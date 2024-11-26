@@ -16,7 +16,14 @@
    - Возвращает обновленное лучшее решение, если текущее решение целочисленное
      и лучшее, иначе возвращает текущее лучшее решение.
 
-3. is_integer(value):
+3. check_best_solution(c, A, b, minimize, best_solution):
+   - Проверяет, является ли текущее решение лучшим, с учетом ограничений.
+   - Перебирает все возможные значения переменных в заданных пределах и
+     вычисляет целевую функцию для каждой комбинации.
+   - Возвращает True, если найдено решение, удовлетворяющее ограничениям,
+     иначе False.
+
+4. is_integer(value):
    - Проверяет, является ли переданное значение целым числом.
    - Возвращает True, если значение является целым числом, иначе False.
 """
@@ -40,7 +47,7 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
             continue  # Нет решения, пропускаем итерацию
 
         answer_variables = answer_simplexsus[1::]
-        current_best_solution = check_integer_solution(answer_simplexsus, answer_variables, current_best_solution)
+        current_best_solution = check_integer_solution(answer_simplexsus, answer_variables, current_best_solution, minimize)
 
         # Если нашли новое лучшее решение, обновляем best_solution
         if current_best_solution is not None and (best_solution is None or current_best_solution[0] > best_solution[0]):
@@ -75,23 +82,90 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
 
             i += 1  # Увеличиваем индекс
 
-    return best_solution
+    if check_best_solution(c, A, b, minimize, best_solution):
+        return best_solution
+    else:
+        return [float("inf")]
 
 
-def check_integer_solution(answer_simplexsus, answer_variables, best_solution):
+def check_integer_solution(answer_simplexsus, answer_variables, best_solution, minimize):
     """
     Проверяет, является ли текущее решение целочисленным и обновляет лучшее решение.
     """
     is_integer_solution = all(floor(var) == var for var in answer_variables)
 
     if is_integer_solution:
-        if best_solution is None or answer_simplexsus[0] < best_solution[0]:
+        if best_solution is None or (minimize and answer_simplexsus[0] < best_solution[0]):
             best_solution = answer_simplexsus
             print("\033[93m[ + ]\033[0m New best solution found:\033[93m", best_solution, "\033[0m\n")
+
+        elif (not minimize) and answer_simplexsus[0] > best_solution[0]:
+            best_solution = answer_simplexsus
+            print("\033[93m[ + ]\033[0m New best solution found:\033[93m", best_solution, "\033[0m\n")
+
         else:
             print("\033[95m[ * ]\033[0m Current solution is integer but not better:\033[93m", answer_simplexsus, "\033[0m\n")
 
     return best_solution
+
+
+def check_best_solution(c, A, b, minimize, best_solution):
+    """
+    Проверяет, является ли текущее решение лучшим, с учетом ограничений.
+    """
+    # Определяем ограничение по максимальному значению из вектора b
+    limitation = floor(max(b))
+    
+    # Инициализируем список альтернативных значений переменных с нулями
+    x_alternatives = [0 for _ in c]
+    
+    # Определяем количество цифр в целевой функции для форматирования вывода
+    num_digits_f = len(str(abs(best_solution[0])))
+
+    if len(x_alternatives) == 3:
+        for x_alternatives[0] in range(limitation):
+            for x_alternatives[1] in range(limitation):
+                for x_alternatives[2] in range(limitation):
+                    check_f = sum(c[i] * x_alternatives[i] for i in range(len(c)))
+
+                    # Выводим текущее состояние перебора
+                    print(f"\033[95m[ * ]\033[0m scrambling... {x_alternatives} F = {check_f}:", end=(" " * (num_digits_f - len(str(abs(check_f))))))
+
+                    # Проверка ограничений
+                    row = 0
+                    len_A = len(A)
+                    constraint_check = True
+
+                    # Проверяем каждое ограничение
+                    while row < len_A and constraint_check:
+                        check_row = sum(A[row][col] * x_alternatives[col] for col in range(len(A[0])))
+                        constraint_check = round(check_row, 1) <= round(b[row], 1)
+                        constraint_result = "\033[92m[True]\033[0m" if constraint_check else "\033[91m[False]\033[0m"
+
+                        row += 1\
+
+                    print(constraint_result)
+
+                    # Если текущее значение не удовлетворяет ограничениям, продолжаем
+                    if not constraint_check:
+                        continue
+
+                    # Если мы не минимизируем и текущее значение целевой функции больше, чем лучшее решение, выводим сообщение
+                    elif not minimize and check_f > best_solution[0]:
+                        print(f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}")
+                        return False
+
+                    # Если мы минимизируем и текущее значение целевой функции меньше, чем лучшее решение, выводим сообщение
+                    elif minimize and check_f < best_solution[0]:
+                        print(f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}")
+                        return False
+
+                    # Если текущее значение целевой функции равно лучшему решению, но альтернативы отличаются, выводим сообщение
+                    elif check_f == best_solution[0] and x_alternatives != best_solution[1::]:
+                        print(f"\033[93m[ + ]\033[0m Yet another answer found: {[check_f] + x_alternatives}")
+
+    print()
+    return True  # Возвращаем True, если все проверки пройдены
 
 
 def is_integer(value):
