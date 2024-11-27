@@ -39,7 +39,14 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
     stack = [(c, A, b, f, minimize, best_solution)]
 
     while stack:
-        current_c, current_A, current_b, current_f, current_minimize, current_best_solution = stack.pop()
+        (
+            current_c,
+            current_A,
+            current_b,
+            current_f,
+            current_minimize,
+            current_best_solution,
+        ) = stack.pop()
 
         answer_simplexsus = simplexsus(current_c, current_A, current_b, current_f, current_minimize)
 
@@ -70,13 +77,31 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
                 new_b_left = current_b + [branching_variable]
 
                 # Добавляем новое ограничение для x_i <= branching_variable
-                stack.append((current_c, new_A_left, new_b_left, current_f, current_minimize, best_solution))
+                stack.append(
+                    (
+                        current_c,
+                        new_A_left,
+                        new_b_left,
+                        current_f,
+                        current_minimize,
+                        best_solution,
+                    )
+                )
 
                 # Добавляем ограничение для x_i >= branching_variable + 1
                 new_A_right = current_A + [[0 if j != i else -1 for j in range(len(c))]]
                 new_b_right = current_b + [(branching_variable + 1) * -1]
 
-                stack.append((current_c, new_A_right, new_b_right, current_f, current_minimize, best_solution))
+                stack.append(
+                    (
+                        current_c,
+                        new_A_right,
+                        new_b_right,
+                        current_f,
+                        current_minimize,
+                        best_solution,
+                    )
+                )
 
                 found = True  # Устанавливаем флаг, чтобы выйти из цикла
 
@@ -97,14 +122,28 @@ def check_integer_solution(answer_simplexsus, answer_variables, best_solution, m
     if is_integer_solution:
         if best_solution is None or (minimize and answer_simplexsus[0] < best_solution[0]):
             best_solution = answer_simplexsus
-            print("\033[93m[ + ]\033[0m New best solution found:\033[93m", best_solution, "\033[0m\n")
+
+            print(
+                "\033[93m[ + ]\033[0m New best solution found:\033[93m",
+                best_solution,
+                "\033[0m\n",
+            )
 
         elif (not minimize) and answer_simplexsus[0] > best_solution[0]:
             best_solution = answer_simplexsus
-            print("\033[93m[ + ]\033[0m New best solution found:\033[93m", best_solution, "\033[0m\n")
+
+            print(
+                "\033[93m[ + ]\033[0m New best solution found:\033[93m",
+                best_solution,
+                "\033[0m\n",
+            )
 
         else:
-            print("\033[95m[ * ]\033[0m Current solution is integer but not better:\033[93m", answer_simplexsus, "\033[0m\n")
+            print(
+                "\033[95m[ * ]\033[0m Current solution is integer but not better:\033[93m",
+                answer_simplexsus,
+                "\033[0m\n",
+            )
 
     return best_solution
 
@@ -115,10 +154,10 @@ def check_best_solution(c, A, b, minimize, best_solution):
     """
     # Определяем ограничение по максимальному значению из вектора b
     limitation = floor(max(b)) + 1
-    
+
     # Инициализируем список альтернативных значений переменных с нулями
     x_alternatives = [0 for _ in c]
-    
+
     # Определяем количество цифр в целевой функции для форматирования вывода
     num_digits_f = len(str(abs(best_solution[0])))
 
@@ -129,7 +168,10 @@ def check_best_solution(c, A, b, minimize, best_solution):
                     check_f = sum(c[i] * x_alternatives[i] for i in range(len(c)))
 
                     # Выводим текущее состояние перебора
-                    print(f"\033[95m[ * ]\033[0m Scrambling... {x_alternatives} F = {check_f}:", end=(" " * (num_digits_f - len(str(abs(check_f))))))
+                    print(
+                        f"\033[95m[ * ]\033[0m Scrambling... {x_alternatives} F = {check_f}:",
+                        end=(" " * (num_digits_f - len(str(abs(check_f))))),
+                    )
 
                     # Проверка ограничений
                     row = 0
@@ -142,7 +184,7 @@ def check_best_solution(c, A, b, minimize, best_solution):
                         constraint_check = round(check_row, 1) <= round(b[row], 1)
                         constraint_result = "\033[92m[True]\033[0m" if constraint_check else "\033[91m[False]\033[0m"
 
-                        row += 1\
+                        row += 1
 
                     print(constraint_result)
 
@@ -152,17 +194,23 @@ def check_best_solution(c, A, b, minimize, best_solution):
 
                     # Если мы не минимизируем и текущее значение целевой функции больше, чем лучшее решение, выводим сообщение
                     elif not minimize and check_f > best_solution[0]:
-                        print(f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}")
+                        print(
+                            f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}"
+                        )
                         return False
 
                     # Если мы минимизируем и текущее значение целевой функции меньше, чем лучшее решение, выводим сообщение
                     elif minimize and check_f < best_solution[0]:
-                        print(f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}")
+                        print(
+                            f"\n\033[91m[ - ] There's no answer\033[0m: {[check_f] + x_alternatives}"
+                        )
                         return False
 
                     # Если текущее значение целевой функции равно лучшему решению, но альтернативы отличаются, выводим сообщение
                     elif check_f == best_solution[0] and x_alternatives != best_solution[1::]:
-                        print(f"\033[93m[ + ]\033[0m Yet another answer found: {[check_f] + x_alternatives}")
+                        print(
+                            f"\033[93m[ + ]\033[0m Yet another answer found: {[check_f] + x_alternatives}"
+                        )
 
     print()
     return True  # Возвращаем True, если все проверки пройдены

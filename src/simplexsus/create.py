@@ -41,6 +41,7 @@ def create_answer_variables(b, var_row, old_var_col):
 
     for i in range(len(var_row)):
         if var_row[i] in old_var_col:
-            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)  # Сохранение значения
+            # Сохранение значения
+            answer_variables[old_var_col.index(var_row[i]) - 1] = round(b[i], 2)
 
     return answer_variables

@@ -16,9 +16,22 @@ def main():
     b = [5, 2, 6]                               # Правая часть ограничений
     f = 0                                       # Значение функции
 
+    # Преобразование в двойственную задачу линейного программирования
     # c, A, b, minimize = to_dual_task(c, A, b, minimize)
-    # print("\033[93m[ + ]\033[0m Answer:\033[93m", simplexsus(c, A, b, f, minimize), "\033[0m")
-    print("\033[93m[ + ]\033[0m Best answer:\033[93m", branches_and_bounds(c, A, b, f, minimize), "\033[0m")
+
+    # Решения задач линейного программирования при помощи симплекс-метода
+    # print(
+    #     "\033[93m[ + ]\033[0m Answer:\033[93m",
+    #     simplexsus(c, A, b, f, minimize),
+    #     "\033[0m",
+    # )
+
+    # Решения задач целочисленного линейного программирования при помощи метода ветвей и границ
+    print(
+        "\033[93m[ + ]\033[0m Best answer:\033[93m",
+        branches_and_bounds(c, A, b, f, minimize),
+        "\033[0m",
+    )
 
     return 0
 

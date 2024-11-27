@@ -46,6 +46,7 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
     Выводит решение с проверкой симплекс-таблицы в терминал.
     """
     answer_variables = create_answer_variables(b, var_row, old_var_col)
+
     check_f = sum(
         b[i] * old_c[old_var_col.index(var_row[i]) - 1]
         for i in range(len(var_row))
@@ -64,9 +65,13 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
         check_row = sum(
             old_A[row][col] * answer_variables[col] for col in range(len(old_A[0]))
         )
+
         constraint_check = round(check_row, 1) <= round(old_b[row], 1)
 
-        constraint_result = "\033[92m[True]\033[0m" if constraint_check else "\033[91m[False]\033[0m"
+        constraint_result = (
+            "\033[92m[True]\033[0m" if constraint_check else "\033[91m[False]\033[0m"
+        )
+
         print(
             f"{constraint_result} {' + '.join(f'({round(old_A[row][col], 2)} * {answer_variables[col]})' for col in range(len(old_A[0])))} <= {round(old_b[row], 2)}"
         )
@@ -80,4 +85,5 @@ def print_simplex_answer(old_c, old_A, old_b, b, f, var_row, old_var_col):
             f"x{i + 1} = {answer_variables[i]} " for i in range(len(answer_variables))
         ),
     )
+
     return True  # Успешное завершение
