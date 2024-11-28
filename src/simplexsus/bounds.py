@@ -57,7 +57,10 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
         current_best_solution = check_integer_solution(answer_simplexsus, answer_variables, current_best_solution, minimize)
 
         # Если нашли новое лучшее решение, обновляем best_solution
-        if current_best_solution is not None and (best_solution is None or current_best_solution[0] > best_solution[0]):
+        if current_best_solution is not None and (best_solution is None or (minimize and current_best_solution[0] < best_solution[0])):
+            best_solution = current_best_solution
+
+        elif current_best_solution is not None and (best_solution is None or ((not minimize) and current_best_solution[0] > best_solution[0])):
             best_solution = current_best_solution
 
         i = 0
@@ -153,7 +156,7 @@ def check_best_solution(c, A, b, minimize, best_solution):
     Проверяет, является ли текущее решение лучшим, с учетом ограничений.
     """
     # Определяем ограничение по максимальному значению из вектора b
-    limitation = floor(max(b)) + 1
+    limitation = floor(max([abs(num) for num in b])) + 1
 
     # Инициализируем список альтернативных значений переменных с нулями
     x_alternatives = [0 for _ in c]
