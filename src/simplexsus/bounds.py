@@ -48,19 +48,29 @@ def branches_and_bounds(c, A, b, f, minimize, best_solution=None):
             current_best_solution,
         ) = stack.pop()
 
-        answer_simplexsus = simplexsus(current_c, current_A, current_b, current_f, current_minimize)
+        answer_simplexsus = simplexsus(
+            current_c, current_A, current_b, current_f, current_minimize
+        )
 
         if answer_simplexsus[0] == float("inf"):
             continue  # Нет решения, пропускаем итерацию
 
         answer_variables = answer_simplexsus[1::]
-        current_best_solution = check_integer_solution(answer_simplexsus, answer_variables, current_best_solution, minimize)
+        current_best_solution = check_integer_solution(
+            answer_simplexsus, answer_variables, current_best_solution, minimize
+        )
 
         # Если нашли новое лучшее решение, обновляем best_solution
-        if current_best_solution is not None and (best_solution is None or (minimize and current_best_solution[0] < best_solution[0])):
+        if current_best_solution is not None and (
+            best_solution is None
+            or (minimize and current_best_solution[0] < best_solution[0])
+        ):
             best_solution = current_best_solution
 
-        elif current_best_solution is not None and (best_solution is None or ((not minimize) and current_best_solution[0] > best_solution[0])):
+        elif current_best_solution is not None and (
+            best_solution is None
+            or ((not minimize) and current_best_solution[0] > best_solution[0])
+        ):
             best_solution = current_best_solution
 
         i = 0
@@ -123,7 +133,9 @@ def check_integer_solution(answer_simplexsus, answer_variables, best_solution, m
     is_integer_solution = all(floor(var) == var for var in answer_variables)
 
     if is_integer_solution:
-        if best_solution is None or (minimize and answer_simplexsus[0] < best_solution[0]):
+        if best_solution is None or (
+            minimize and answer_simplexsus[0] < best_solution[0]
+        ):
             best_solution = answer_simplexsus
 
             print(
@@ -170,12 +182,6 @@ def check_best_solution(c, A, b, minimize, best_solution):
                 for x_alternatives[2] in range(limitation):
                     check_f = sum(c[i] * x_alternatives[i] for i in range(len(c)))
 
-                    # Выводим текущее состояние перебора
-                    print(
-                        f"\033[95m[ * ]\033[0m Scrambling... {x_alternatives} F = {check_f}:",
-                        end=(" " * (num_digits_f - len(str(abs(check_f))))),
-                    )
-
                     # Проверка ограничений
                     row = 0
                     len_A = len(A)
@@ -183,13 +189,33 @@ def check_best_solution(c, A, b, minimize, best_solution):
 
                     # Проверяем каждое ограничение
                     while row < len_A and constraint_check:
-                        check_row = sum(A[row][col] * x_alternatives[col] for col in range(len(A[0])))
+                        check_row = sum(
+                            A[row][col] * x_alternatives[col]
+                            for col in range(len(A[0]))
+                        )
+
                         constraint_check = round(check_row, 1) <= round(b[row], 1)
-                        constraint_result = "\033[92m[True]\033[0m" if constraint_check else "\033[91m[False]\033[0m"
+
+                        constraint_result = (
+                            "\033[92m[\033[4mTrue\033[0m\033[92m]\033[0m"
+                            if constraint_check
+                            else "\033[91m[False]\033[0m"
+                        )
 
                         row += 1
 
-                    print(constraint_result)
+                    # Выводим текущее состояние перебора
+                    print(
+                        "\033[95m[ * ]\033[0m ",
+                        "\033[4m" * constraint_check,
+                        f"Scrambling... {x_alternatives} F = {check_f}:\033[0m",
+                        sep="",
+                        end=(
+                            " " * (num_digits_f - len(str(abs(check_f))))
+                            + constraint_result
+                            + "\n"
+                        ),
+                    )
 
                     # Если текущее значение не удовлетворяет ограничениям, продолжаем
                     if not constraint_check:
@@ -210,7 +236,10 @@ def check_best_solution(c, A, b, minimize, best_solution):
                         return False
 
                     # Если текущее значение целевой функции равно лучшему решению, но альтернативы отличаются, выводим сообщение
-                    elif check_f == best_solution[0] and x_alternatives != best_solution[1::]:
+                    elif (
+                        check_f == best_solution[0]
+                        and x_alternatives != best_solution[1::]
+                    ):
                         print(
                             f"\033[93m[ + ]\033[0m Yet another answer found: {[check_f] + x_alternatives}"
                         )
